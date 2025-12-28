@@ -41,3 +41,10 @@
 - [x] Unit tests for Rashi calculations
 - [x] Unit tests for 20 Porondam score calculations
 - [x] Unit tests for overall score and recommendations
+
+## PDF Export Feature
+- [x] Create PDF generation service on backend
+- [x] Design PDF report template with Porondam.ai branding
+- [x] Include match percentage, detailed breakdown, and recommendations in PDF
+- [x] Add "Download PDF" button to results page
+- [x] Test PDF generation and download functionality

@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
+import { generateCompatibilityPDF, downloadPDF } from "@/lib/pdfGenerator";
+import { toast } from "sonner";
 import {
   Tooltip,
   TooltipContent,
@@ -71,6 +73,58 @@ interface MatchResultsProps {
 
 export default function MatchResults({ result, onReset }: MatchResultsProps) {
   const [language, setLanguage] = useState<"english" | "sinhala">("english");
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+
+  // Calculate total points (moved up for PDF generation)
+  const totalScore = Object.values(result.porondamScores).reduce((sum, s) => sum + s.score, 0);
+  const maxTotalScore = Object.values(result.porondamScores).reduce((sum, s) => sum + s.maxPoints, 0);
+
+  const handleDownloadPDF = async () => {
+    setIsGeneratingPDF(true);
+    try {
+      const pdfData = {
+        person1: {
+          name: result.chart1Info.personName,
+          gender: result.chart1Info.gender,
+          nakshatra: result.chart1Info.nakshatra,
+          nakshatraName: result.chart1Info.nakshatraName?.english || "Unknown",
+          pada: 1, // Default pada
+          rashi: result.chart1Info.rashi,
+          rashiName: result.chart1Info.rashiName?.english || "Unknown",
+        },
+        person2: {
+          name: result.chart2Info.personName,
+          gender: result.chart2Info.gender,
+          nakshatra: result.chart2Info.nakshatra,
+          nakshatraName: result.chart2Info.nakshatraName?.english || "Unknown",
+          pada: 1, // Default pada
+          rashi: result.chart2Info.rashi,
+          rashiName: result.chart2Info.rashiName?.english || "Unknown",
+        },
+        result: {
+          overallScore: result.overallScore,
+          totalPoints: totalScore,
+          maxPoints: maxTotalScore,
+          matchedCount: result.matchedCount,
+          totalAspects: result.totalAspects,
+          scores: result.porondamScores,
+          recommendations: result.recommendations.english,
+          recommendationsSinhala: result.recommendations.sinhala,
+        },
+        createdAt: new Date(),
+      };
+
+      const doc = generateCompatibilityPDF(pdfData);
+      const filename = `porondam-compatibility-${result.chart1Info.personName || "person1"}-${result.chart2Info.personName || "person2"}-${new Date().toISOString().split("T")[0]}.pdf`;
+      downloadPDF(doc, filename);
+      toast.success(language === "english" ? "PDF downloaded successfully!" : "PDF සාර්ථකව බාගත කරන ලදී!");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast.error(language === "english" ? "Failed to generate PDF" : "PDF සෑදීම අසාර්ථක විය");
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
 
   const getScoreColor = (score: number) => {
     if (score >= 70) return "text-[var(--success)]";
@@ -98,9 +152,7 @@ export default function MatchResults({ result, onReset }: MatchResultsProps) {
     ([, a], [, b]) => b.maxPoints - a.maxPoints
   );
 
-  // Calculate total points
-  const totalScore = Object.values(result.porondamScores).reduce((sum, s) => sum + s.score, 0);
-  const maxTotalScore = Object.values(result.porondamScores).reduce((sum, s) => sum + s.maxPoints, 0);
+
 
   return (
     <div className="min-h-screen gradient-subtle">
@@ -264,6 +316,14 @@ export default function MatchResults({ result, onReset }: MatchResultsProps) {
             <Button onClick={onReset} variant="outline" className="flex items-center gap-2">
               <RefreshCw className="w-4 h-4" />
               {language === "english" ? "New Match" : "නව ගැලපීම"}
+            </Button>
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-2"
+              onClick={() => handleDownloadPDF()}
+            >
+              <Download className="w-4 h-4" />
+              {language === "english" ? "Download PDF" : "PDF බාගන්න"}
             </Button>
             <Link href="/learn">
               <Button variant="outline" className="flex items-center gap-2">
