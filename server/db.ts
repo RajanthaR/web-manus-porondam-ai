@@ -1,6 +1,10 @@
-import { eq } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { 
+  InsertUser, users, 
+  horoscopeCharts, InsertHoroscopeChart, HoroscopeChart,
+  matchingResults, InsertMatchingResult, MatchingResult
+} from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -17,6 +21,8 @@ export async function getDb() {
   }
   return _db;
 }
+
+// ============ USER OPERATIONS ============
 
 export async function upsertUser(user: InsertUser): Promise<void> {
   if (!user.openId) {
@@ -89,4 +95,131 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// ============ HOROSCOPE CHART OPERATIONS ============
+
+export async function createHoroscopeChart(chart: InsertHoroscopeChart): Promise<number> {
+  const db = await getDb();
+  if (!db) {
+    throw new Error("Database not available");
+  }
+
+  const result = await db.insert(horoscopeCharts).values(chart);
+  return result[0].insertId;
+}
+
+export async function getHoroscopeChartById(id: number): Promise<HoroscopeChart | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db.select().from(horoscopeCharts).where(eq(horoscopeCharts.id, id)).limit(1);
+  return result[0];
+}
+
+export async function getHoroscopeChartsByUserId(userId: number): Promise<HoroscopeChart[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select()
+    .from(horoscopeCharts)
+    .where(eq(horoscopeCharts.userId, userId))
+    .orderBy(desc(horoscopeCharts.createdAt));
+}
+
+export async function updateHoroscopeChart(id: number, updates: Partial<InsertHoroscopeChart>): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+
+  await db.update(horoscopeCharts).set(updates).where(eq(horoscopeCharts.id, id));
+}
+
+export async function deleteHoroscopeChart(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+
+  await db.delete(horoscopeCharts).where(eq(horoscopeCharts.id, id));
+}
+
+// ============ MATCHING RESULTS OPERATIONS ============
+
+export async function createMatchingResult(result: InsertMatchingResult): Promise<number> {
+  const db = await getDb();
+  if (!db) {
+    throw new Error("Database not available");
+  }
+
+  const insertResult = await db.insert(matchingResults).values(result);
+  return insertResult[0].insertId;
+}
+
+export async function getMatchingResultById(id: number): Promise<MatchingResult | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db.select().from(matchingResults).where(eq(matchingResults.id, id)).limit(1);
+  return result[0];
+}
+
+export async function getMatchingResultsByUserId(userId: number): Promise<MatchingResult[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select()
+    .from(matchingResults)
+    .where(eq(matchingResults.userId, userId))
+    .orderBy(desc(matchingResults.createdAt));
+}
+
+export async function getMatchingResultWithCharts(id: number): Promise<{
+  result: MatchingResult;
+  chart1: HoroscopeChart | undefined;
+  chart2: HoroscopeChart | undefined;
+} | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await getMatchingResultById(id);
+  if (!result) return undefined;
+
+  const chart1 = result.chart1Id ? await getHoroscopeChartById(result.chart1Id) : undefined;
+  const chart2 = result.chart2Id ? await getHoroscopeChartById(result.chart2Id) : undefined;
+
+  return { result, chart1, chart2 };
+}
+
+export async function deleteMatchingResult(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+
+  await db.delete(matchingResults).where(eq(matchingResults.id, id));
+}
+
+// ============ COMBINED OPERATIONS ============
+
+export async function getRecentMatchesForUser(userId: number, limit: number = 10): Promise<Array<{
+  match: MatchingResult;
+  chart1Name: string | null;
+  chart2Name: string | null;
+}>> {
+  const db = await getDb();
+  if (!db) return [];
+
+  const matches = await db.select()
+    .from(matchingResults)
+    .where(eq(matchingResults.userId, userId))
+    .orderBy(desc(matchingResults.createdAt))
+    .limit(limit);
+
+  const results = [];
+  for (const match of matches) {
+    const chart1 = match.chart1Id ? await getHoroscopeChartById(match.chart1Id) : undefined;
+    const chart2 = match.chart2Id ? await getHoroscopeChartById(match.chart2Id) : undefined;
+    
+    results.push({
+      match,
+      chart1Name: chart1?.personName ?? null,
+      chart2Name: chart2?.personName ?? null,
+    });
+  }
+
+  return results;
+}

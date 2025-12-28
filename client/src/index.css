@@ -3,6 +3,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@font-face {
+  font-family: "Noto Sans Sinhala";
+  src: url("https://fonts.gstatic.com/s/notosanssinhala/v26/yMJ2MJBya43H0SUF_WmcBEEf4rQVO2P524cPBdzJ.woff2") format("woff2");
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -43,39 +51,48 @@
 }
 
 :root {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-600);
-  --sidebar-primary-foreground: var(--color-blue-50);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
-  --radius: 0.65rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.235 0.015 65);
+  /* Porondam.ai - Elegant Purple & Gold Theme */
+  --primary: oklch(0.45 0.18 280);
+  --primary-foreground: oklch(0.98 0.01 280);
+  --sidebar-primary: oklch(0.50 0.16 280);
+  --sidebar-primary-foreground: oklch(0.98 0.01 280);
+  --chart-1: oklch(0.50 0.15 280);
+  --chart-2: oklch(0.55 0.12 45);
+  --chart-3: oklch(0.60 0.15 150);
+  --chart-4: oklch(0.65 0.12 200);
+  --chart-5: oklch(0.55 0.18 340);
+  --radius: 0.75rem;
+  --background: oklch(0.99 0.005 280);
+  --foreground: oklch(0.20 0.02 280);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.235 0.015 65);
+  --card-foreground: oklch(0.20 0.02 280);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.235 0.015 65);
-  --secondary: oklch(0.98 0.001 286.375);
-  --secondary-foreground: oklch(0.4 0.015 65);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.141 0.005 285.823);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.623 0.214 259.815);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.235 0.015 65);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.623 0.214 259.815);
+  --popover-foreground: oklch(0.20 0.02 280);
+  --secondary: oklch(0.75 0.12 45);
+  --secondary-foreground: oklch(0.15 0.05 45);
+  --muted: oklch(0.95 0.01 280);
+  --muted-foreground: oklch(0.50 0.02 280);
+  --accent: oklch(0.92 0.04 280);
+  --accent-foreground: oklch(0.25 0.08 280);
+  --destructive: oklch(0.55 0.20 25);
+  --destructive-foreground: oklch(0.98 0.01 25);
+  --border: oklch(0.90 0.02 280);
+  --input: oklch(0.90 0.02 280);
+  --ring: oklch(0.45 0.18 280);
+  --sidebar: oklch(0.98 0.01 280);
+  --sidebar-foreground: oklch(0.20 0.02 280);
+  --sidebar-accent: oklch(0.95 0.02 280);
+  --sidebar-accent-foreground: oklch(0.20 0.02 280);
+  --sidebar-border: oklch(0.90 0.02 280);
+  --sidebar-ring: oklch(0.45 0.18 280);
+  
+  /* Custom Porondam colors */
+  --gold: oklch(0.75 0.15 85);
+  --gold-dark: oklch(0.55 0.15 85);
+  --purple-deep: oklch(0.35 0.18 280);
+  --purple-light: oklch(0.92 0.06 280);
+  --success: oklch(0.60 0.18 145);
+  --warning: oklch(0.70 0.18 85);
 }
 
 .dark {
@@ -117,8 +134,13 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    font-family: "Inter", "Noto Sans Sinhala", system-ui, sans-serif;
+    scroll-behavior: smooth;
+  }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -130,6 +152,11 @@
   input[type="checkbox"]:not(:disabled),
   input[type="radio"]:not(:disabled) {
     @apply cursor-pointer;
+  }
+  
+  /* Sinhala text styling */
+  .sinhala {
+    font-family: "Noto Sans Sinhala", sans-serif;
   }
 }
 
@@ -173,5 +200,164 @@
       padding-right: 2rem;
       max-width: 1280px; /* Standard content width */
     }
+  }
+  
+  /* Elegant gradient backgrounds */
+  .gradient-primary {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+  }
+  
+  .gradient-gold {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  }
+  
+  .gradient-subtle {
+    background: linear-gradient(180deg, var(--background), var(--purple-light));
+  }
+  
+  /* Glass effect */
+  .glass {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  /* Card hover effect */
+  .card-hover {
+    transition: all 0.3s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Score circle */
+  .score-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  .score-circle::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    padding: 4px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+  
+  /* Upload dropzone */
+  .dropzone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .dropzone:hover,
+  .dropzone.active {
+    border-color: var(--primary);
+    background: var(--accent);
+  }
+  
+  .dropzone.has-file {
+    border-style: solid;
+    border-color: var(--success);
+  }
+  
+  /* Porondam score bar */
+  .porondam-bar {
+    height: 8px;
+    border-radius: 4px;
+    background: var(--muted);
+    overflow: hidden;
+  }
+  
+  .porondam-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  
+  .porondam-bar-fill.matched {
+    background: linear-gradient(90deg, var(--success), oklch(0.65 0.18 145));
+  }
+  
+  .porondam-bar-fill.partial {
+    background: linear-gradient(90deg, var(--warning), oklch(0.75 0.18 85));
+  }
+  
+  .porondam-bar-fill.unmatched {
+    background: linear-gradient(90deg, var(--destructive), oklch(0.60 0.20 25));
+  }
+  
+  /* Animated gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, var(--primary), var(--secondary), var(--gold));
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 5s ease infinite;
+  }
+  
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  
+  /* Fade in animation */
+  .fade-in {
+    animation: fadeIn 0.5s ease forwards;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Pulse animation for loading */
+  .pulse-soft {
+    animation: pulseSoft 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulseSoft {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+  
+  /* Ornamental divider */
+  .ornament {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .ornament::before,
+  .ornament::after {
+    content: '✦';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-size: 0.75rem;
+  }
+  
+  .ornament::before {
+    left: -1.5rem;
+  }
+  
+  .ornament::after {
+    right: -1.5rem;
   }
 }
