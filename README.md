@@ -108,18 +108,17 @@ The application will be available at `http://localhost:3000`
 ```
 web-manus-porondam-ai/
 ├── client/                 # React frontend
-│   ├── src/
-│   │   ├── components/     # Reusable UI components
-│   │   ├── pages/         # Page components
-│   │   ├── hooks/         # Custom React hooks
-│   │   ├── lib/           # Utility functions
-│   │   └── styles/        # Global styles
+│   └── src/
+│       ├── components/     # Reusable UI components (ui/ = shadcn primitives)
+│       ├── pages/         # Page components (Home, Match, Dashboard, Learn)
+│       ├── hooks/         # Custom React hooks
+│       └── lib/           # tRPC client + utilities
 ├── server/                # Node.js backend
-│   ├── _core/            # Core server setup
-│   ├── routers.ts        # tRPC routes
-│   ├── db.ts             # Database connection
-│   ├── astrology.ts      # Astrological calculations
-│   └── horoscopeProcessor.ts  # Image processing
+│   ├── _core/            # Framework core (do not modify)
+│   ├── routers.ts        # tRPC routes (auth, horoscope, matching, reference)
+│   ├── db.ts             # Database queries
+│   ├── astrology.ts      # Nakshatra/Rashi tables + Porondam scoring
+│   └── horoscopeProcessor.ts  # Vision-LLM chart image processing
 ├── drizzle/              # Database schema and migrations
 ├── shared/               # Shared types and utilities
 └── patches/              # Package patches
