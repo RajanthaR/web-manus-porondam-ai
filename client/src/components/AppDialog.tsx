@@ -70,7 +70,7 @@ export function AppDialog({
             </DialogTitle>
           ) : null}
           <DialogDescription className="text-sm text-[#858481] leading-5 tracking-[-0.154px]">
-            Please login with Manus to continue
+            Please log in to continue to continue
           </DialogDescription>
         </div>
 
@@ -80,7 +80,7 @@ export function AppDialog({
             onClick={onLogin}
             className="w-full h-10 bg-[#1a1a19] hover:bg-[#1a1a19]/90 text-white rounded-[10px] text-sm font-medium leading-5 tracking-[-0.154px]"
           >
-            Login with Manus
+            Log in to continue
           </Button>
         </DialogFooter>
       </DialogContent>
