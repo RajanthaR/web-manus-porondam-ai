@@ -7,7 +7,7 @@ Porondam.ai is a Sri Lankan horoscope-matching platform: users upload horoscope 
 ## Tech Stack
 
 - **Frontend**: React 19 + TypeScript 5.9, Vite 7, Tailwind CSS 4, shadcn/ui (Radix primitives), wouter (routing), TanStack Query, framer-motion
-- **Backend**: Express, tRPC v11, Drizzle ORM + MySQL, jose (JWT), `invokeLLM` (vision) via Manus platform API, AWS S3 SDK (image storage)
+- **Backend**: Express, tRPC v11, Drizzle ORM + MySQL, jose (JWT), `invokeLLM` (vision) via the platform LLM API API, AWS S3 SDK (image storage)
 - **Tooling**: pnpm (required — `pnpm-lock.yaml` + patched deps), Vitest, Prettier, esbuild, tsx
 
 ## Commands
@@ -31,7 +31,7 @@ Prerequisites: Node 18+, pnpm, MySQL with `.env` (see below).
 
 - `DATABASE_URL` — MySQL connection string (required)
 - `JWT_SECRET` — session signing
-- `VITE_APP_ID` / `OAUTH_SERVER_URL` / `OWNER_OPEN_ID` / `BUILT_IN_FORGE_API_URL` / `BUILT_IN_FORGE_API_KEY` — Manus platform (OAuth + vision LLM, consumed in `server/_core/env.ts`)
+- `VITE_APP_ID` / `OAUTH_SERVER_URL` / `OWNER_OPEN_ID` / `BUILT_IN_FORGE_API_URL` / `BUILT_IN_FORGE_API_KEY` — platform backend (OAuth + vision LLM, consumed in `server/_core/env.ts`)
 - `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` / `AWS_REGION` / `AWS_S3_BUCKET` — chart image storage
 
 Never commit `.env`.
@@ -46,7 +46,7 @@ client/src/
   _core/hooks/useAuth.ts       Auth hook (framework)
   lib/trpc.ts                  tRPC client
 server/
-  _core/                       Manus framework (index, trpc, oauth, llm, env) — DO NOT MODIFY
+  _core/                       vendored template framework (index, trpc, oauth, llm, env) — DO NOT MODIFY
   routers.ts                   tRPC: auth (me/logout),
                                horoscope (processImage/updateChart/myCharts/getChart),
                                matching (calculate/history/getResult/deleteResult),
@@ -72,7 +72,7 @@ patches/wouter@3.7.1.patch     Applied via pnpm patchedDependencies — do not d
 - **Chart extraction**: `server/horoscopeProcessor.ts` (prompt + response parsing)
 - **New API procedure**: `server/routers.ts` + queries in `server/db.ts`; schema in `drizzle/schema.ts` then `pnpm db:push`
 - **New page**: `client/src/pages/` + wouter route in `client/src/App.tsx`
-- **`server/_core/` and `client/src/_core/` are Manus framework code — do not modify**
+- **`server/_core/` and `client/src/_core/` are vendored template framework code — do not modify**
 - **Do NOT delete `patches/wouter@3.7.1.patch`**
 
 ## Testing
